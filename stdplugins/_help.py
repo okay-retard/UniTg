@@ -30,6 +30,7 @@ async def _(event):
     help_string = """@UniBorg
 Python {}
 Telethon {}
+Version 1.0.0
 UserBot Forked from https://github.com/shreyansh8184/UniBorg""".format(
         sys.version,
         __version__
@@ -85,7 +86,7 @@ async def _(event):
         plugin_syntax = "Enter valid **Plugin** name.\nDo `.exec ls stdplugins` or `.helpme` to get list of valid plugin names."
     await event.edit(plugin_syntax)
 
-@borg.on(admin_cmd(pattern="help ?(.*)", allow_sudo=True))
+@borg.on(admin_cmd(pattern="list ?(.*)", allow_sudo=True))
 async def install(event):
     if event.fwd_from:
         return

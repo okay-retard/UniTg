@@ -140,9 +140,9 @@ async def on_afk(event):
                 afk_since = f"`{int(seconds)}s`"
         msg = None
         if Config.AFK_MESSAGE:
-            message_to_reply = f"**{AFK_MESSAGE} (since {afk_since}**).\n**Reason: {reason}**" \
+            message_to_reply = f"**{Config.AFK_MESSAGE} (since {afk_since}**).\n**Reason: {reason}**" \
             if reason \
-            else f"**{AFK_MESSAGE} (since {afk_since})**."
+            else f"**{Config.AFK_MESSAGE} (since {afk_since})**."
         else:
             message_to_reply = f"**I'm afk right now (since {afk_since}**).\n**Reason: {reason}**" \
             if reason \

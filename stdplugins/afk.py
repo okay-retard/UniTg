@@ -139,7 +139,12 @@ async def on_afk(event):
             else:
                 afk_since = f"`{int(seconds)}s`"
         msg = None
-        message_to_reply = f"**I'm afk right now (since {afk_since}**).\n**Reason: {reason}**" \
+        if Config.AFK_MESSAGE:
+            message_to_reply = f"**{AFK_MESSAGE} (since {afk_since}**).\n**Reason: {reason}**" \
+            if reason \
+            else f"**{AFK_MESSAGE} (since {afk_since})**."
+        else:
+            message_to_reply = f"**I'm afk right now (since {afk_since}**).\n**Reason: {reason}**" \
             if reason \
             else f"**I'm afk right now (since {afk_since})**."
         msg = await event.reply(message_to_reply)

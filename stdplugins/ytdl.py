@@ -2,12 +2,14 @@
 Audio and video downloader using Youtube-dl
 .yta To Download in mp3 format
 .ytv To Download in mp4 format.
+.song <songname>
 """
 
 import os
 import json
 import time
 import glob
+import subprocess
 import math
 import asyncio
 from youtube_dl import YoutubeDL
@@ -230,4 +232,4 @@ async def _(event):
         return
     await event.client.send_file(event.chat_id, l, supports_streaming=True, reply_to=event.message)
     await event.delete()
-    os.remove(l)
+    subprocess.check_output("rm -rf *.mp3",shell=True)

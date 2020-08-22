@@ -22,7 +22,7 @@ if Config.BLOCK_MESSAGE:
 else:
     UNIBORG_USER_BOT_WARN_ZERO = "I am currently offline. Please do not SPAM me."
 if Config.CUSTOM_PM:
-    UNIBORG_USER_BOT_NO_WARN = Config.Custom_PM
+    UNIBORG_USER_BOT_NO_WARN = Config.CUSTOM_PM
 else:
     UNIBORG_USER_BOT_NO_WARN = (
     "`Hello! This is an automated message.\n\n`"

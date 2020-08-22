@@ -7,6 +7,7 @@ Audio and video downloader using Youtube-dl
 import os
 import json
 import time
+import glob
 import math
 import asyncio
 from youtube_dl import YoutubeDL
@@ -214,3 +215,12 @@ async def download_video(v_url):
         os.remove(f"{ytdl_data['id']}.mp4")
         await v_url.delete()
         os.system(" youtube-dl --rm-cache-dir")
+
+@borg.on(admin_cmd(pattern="song (.*)"))
+async def _(event):
+    song = url = event.pattern_match.group(1) + " " + "song"
+    os.system(f"youtube-dl -x --audio-format mp3 --add-metadata --embed-thumbnai 'ytsearch:{song}'")
+    l = glob.glob("*.mp3")
+    if not l:
+        await event.edit("`Song not found`")
+    await event.client.send_file(event.chat_id, l, supports_streaming=True, reply_to=event.message)

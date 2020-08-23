@@ -3,6 +3,7 @@
 
 from telethon import events
 import os
+import io
 import asyncio
 from uniborg.util import admin_cmd
 import aiohttp
@@ -96,5 +97,10 @@ async def _(event):
         await event.edit("Is that even a paste url?")
         return
     resp = await AioHttp().get_text(raw_link)
-    await event.edit(
+    if len(str(resp)) > 4096:
+        with io.BytesIO(str.encode(msg)) as out_file:
+            out_file.name = "gpaste.txt"
+            await event.client.send_file(even.chat_id, out_file)
+    else:
+       await event.edit(
         f"**URL content** :\n`{resp}`")

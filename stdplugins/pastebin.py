@@ -1,31 +1,20 @@
-"""IX.IO pastebin like site
-Syntax: .paste"""
+"""`.paste` : Reply to a text or a file to paste it on nekobin
+`.gpaste` : Reply to a paste link to get it's content."""
+
 from telethon import events
-import asyncio
-from datetime import datetime
 import os
-import requests
+import asyncio
 from uniborg.util import admin_cmd
+import aiohttp
 
-
-def progress(current, total):
-    logger.info("Downloaded {} of {}\nCompleted {}".format(current, total, (current / total) * 100))
-
+from stdplugins.corona_virus import AioHttp
 
 @borg.on(admin_cmd("paste ?(.*)"))
 async def _(event):
-    if event.fwd_from:
-        return
-    start = datetime.now()
-    if not os.path.isdir(Config.TMP_DOWNLOAD_DIRECTORY):
-        os.makedirs(Config.TMP_DOWNLOAD_DIRECTORY)
-    input_str = event.pattern_match.group(1)
-    message = "SYNTAX: `.paste <long text to include>`"
-    if input_str:
-        message = input_str
-    elif event.reply_to_msg_id:
-        previous_message = await event.get_reply_message()
-        if previous_message.media:
+    reply = await event.get_reply_message()
+    if reply:
+        text = reply.message
+    if reply.media:
             downloaded_file_name = await borg.download_media(
                 previous_message,
                 Config.TMP_DOWNLOAD_DIRECTORY,
@@ -34,21 +23,62 @@ async def _(event):
             m_list = None
             with open(downloaded_file_name, "rb") as fd:
                 m_list = fd.readlines()
-            message = ""
+            text = ""
             for m in m_list:
-                message += m.decode("UTF-8") + "\r\n"
+                text += m.decode("UTF-8") + "\r\n"
             os.remove(downloaded_file_name)
-        else:
-            message = previous_message.message
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                    'https://nekobin.com/api/documents',
+                    json={"content": text},
+                    timeout=3
+            ) as response:
+                key = (await response.json())["result"]["key"]
+    except Exception:
+        await event.edit("`Pasting failed`")
+        await asyncio.sleep(2)
+        await event.delete()
+        return
     else:
-        message = "SYNTAX: `.paste <long text to include>`"
-    url = "https://del.dog/documents"
-    r = requests.post(url, data=message.encode("UTF-8")).json()
-    url = f"https://del.dog/{r['key']}"
-    end = datetime.now()
-    ms = (end - start).seconds
-    if r["isUrl"]:
-        nurl = f"https://del.dog/v/{r['key']}"
-        await event.edit("Dogged to {} in {} seconds. GoTo Original URL: {}".format(url, ms, nurl))
+        url = f'https://nekobin.com/{key}'
+        raw_url = f'https://nekobin.com/raw/{key}'
+        reply_text = '**Nekofied:**\n'
+        reply_text += f' - **Link**: {url}\n'
+        reply_text += f' - **Raw**: {raw_url}'
+        await event.edit(
+                reply_text,
+                link_preview=False,
+            )
+            
+@borg.on(admin_cmd("gpaste ?(.*)"))           
+async def _(event):
+    """fetches the content of a dogbin or nekobin URL."""
+    reply = await event.get_reply_message()
+    link = reply.message
+    if not link:
+        await msg(message, text="Input not found!")
+        return
+    await event.edit("`Getting paste content...`")
+    format_view = 'https://del.dog/v/'
+    if link.startswith(format_view):
+        link = link[len(format_view):]
+        raw_link = f'https://del.dog/raw/{link}'
+    elif link.startswith("https://del.dog/"):
+        link = link[len("https://del.dog/"):]
+        raw_link = f'https://del.dog/raw/{link}'
+    elif link.startswith("del.dog/"):
+        link = link[len("del.dog/"):]
+        raw_link = f'https://del.dog/raw/{link}'
+    elif link.startswith("https://nekobin.com/"):
+        link = link[len("https://nekobin.com/"):]
+        raw_link = f'https://nekobin.com/raw/{link}'
+    elif link.startswith("nekobin.com/"):
+        link = link[len("nekobin.com/"):]
+        raw_link = f'https://nekobin.com/raw/{link}'
     else:
-        await event.edit("Dogged to {} in {} seconds".format(url, ms))
+        await event.edit("Is that even a paste url?")
+        return
+    resp = await AioHttp().get_text(raw_link)
+    await event.edit(
+        f"**URL content** :\n`{resp}`")

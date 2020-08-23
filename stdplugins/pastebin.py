@@ -101,6 +101,7 @@ async def _(event):
         with io.BytesIO(str.encode(resp)) as out_file:
             out_file.name = "gpaste.txt"
             await event.client.send_file(event.chat_id, out_file)
+            await event.delete()
     else:
        await event.edit(
         f"**URL content** :\n`{resp}`")

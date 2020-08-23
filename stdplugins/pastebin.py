@@ -35,7 +35,6 @@ async def _(event):
             downloaded_file_name = await borg.download_media(
                 reply,
                 Config.TMP_DOWNLOAD_DIRECTORY,
-                progress_callback=progress
             )
             m_list = None
             with open(downloaded_file_name, "rb") as fd:

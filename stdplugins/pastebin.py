@@ -98,7 +98,7 @@ async def _(event):
         return
     resp = await AioHttp().get_text(raw_link)
     if len(str(resp)) > 4096:
-        with io.BytesIO(str.encode(msg)) as out_file:
+        with io.BytesIO(str.encode(resp)) as out_file:
             out_file.name = "gpaste.txt"
             await event.client.send_file(even.chat_id, out_file)
     else:

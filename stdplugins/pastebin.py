@@ -100,7 +100,7 @@ async def _(event):
     if len(str(resp)) > 4096:
         with io.BytesIO(str.encode(resp)) as out_file:
             out_file.name = "gpaste.txt"
-            await event.client.send_file(even.chat_id, out_file)
+            await event.client.send_file(event.chat_id, out_file)
     else:
        await event.edit(
         f"**URL content** :\n`{resp}`")

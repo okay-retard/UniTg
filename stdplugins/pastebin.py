@@ -33,7 +33,7 @@ async def _(event):
         text = reply.message
     if reply.media:
             downloaded_file_name = await borg.download_media(
-                previous_message,
+                reply,
                 Config.TMP_DOWNLOAD_DIRECTORY,
                 progress_callback=progress
             )

@@ -86,7 +86,7 @@ async def _(event):
         plugin_syntax = "Enter valid **Plugin** name.\nDo `.exec ls stdplugins` or `.helpme` to get list of valid plugin names."
     await event.edit(plugin_syntax)
 
-@borg.on(admin_cmd(pattern="list ?(.*)", allow_sudo=True))
+@borg.on(admin_cmd(pattern="plugin ?(.*)", allow_sudo=True))
 async def install(event):
     if event.fwd_from:
         return

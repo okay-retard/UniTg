@@ -4,6 +4,7 @@ aiohttp
 beautifulsoup4
 cfscrape
 cryptg
+pymongo
 coffeehouse
 emoji
 googletrans

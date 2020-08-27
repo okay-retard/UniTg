@@ -6,6 +6,7 @@ cfscrape
 cryptg
 coffeehouse
 emoji
+pymongo
 googletrans
 google_images_download
 google-api-python-client

@@ -44,3 +44,4 @@ pyfiglet
 heroku3
 fonttools
 lottie
+jikanpy

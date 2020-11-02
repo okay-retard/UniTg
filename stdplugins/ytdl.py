@@ -220,16 +220,9 @@ async def download_video(v_url):
 
 @borg.on(admin_cmd("song ?(.*)"))
 async def _(event):
-    song = url = event.pattern_match.group(1) + " " + "song"
+    song = event.pattern_match.group(1)
     if not song:
         await event.edit("`Enter song name`")
         return
-    await event.edit("Processing...")
-    os.system(f"youtube-dl -x --audio-format mp3 --add-metadata --embed-thumbnai 'ytsearch:{song}'")
-    l = glob.glob("*.mp3")
-    if not l:
-        await event.edit("`Song not found`")
-        return
-    await event.client.send_file(event.chat_id, l, supports_streaming=True, reply_to=event.message)
-    await event.delete()
-    subprocess.check_output("rm -rf *.mp3",shell=True)
+    result = await message.client.inline_query("lybot", song)
+    await result[0].click(message.chat_id,reply_to=event.reply_to_msg_id, hide_via=True)
